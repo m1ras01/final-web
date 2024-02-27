@@ -1,0 +1,6 @@
+lsof -i tcp:3000
+kill -9 PID
+
+or
+
+const PORT = process.env.PORT || 3001;
