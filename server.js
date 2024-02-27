@@ -22,6 +22,9 @@ const User = require('./models/User');
 const BlogPost = require('./models/BlogPost');
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '1111';
+
+// const ADMIN_USERNAME = process.env.ADMIN_USERNAME || db.users.find({}, { "username": 1, "_id": 0 });
+// const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ||  db.users.find({}, { "password": 1, "_id": 0 });
 const img_url = "https://image.tmdb.org/t/p/w500";
 // Configure dotenv
 dotenv.config();
@@ -407,6 +410,8 @@ app.post('/admin/adduser', isAdmin, async (req, res) => {
         });
     
         await user.save();
+        // Testing email sending
+      sendEmail('fokonoe88@gmail.com', 'Test Subject', 'Added new user');
         res.redirect('/admin');
     } catch (error) {
         console.error('Error creating user:', error);
@@ -475,7 +480,7 @@ app.post('/admin/add-post', ensureAuthenticated, upload.fields([
     try {
       const newPost = new BlogPost(newPostData);
       // Testing email sending
-      sendEmail('fokonoe88@gmail.com', 'Test Subject', 'This is a test email from Nodemailer.');
+      sendEmail('fokonoe88@gmail.com', 'Test Subject', 'Added new post');
       await newPost.save();
       res.redirect('/blog');
     } catch (error) {
@@ -504,6 +509,8 @@ app.post('/admin/delete-post/:postId', ensureAuthenticated, async (req, res) => 
 
     try {
         await BlogPost.findByIdAndDelete(req.params.postId);
+        // Testing email sending
+      sendEmail('fokonoe88@gmail.com', 'Test Subject', 'Removed a post');
         res.redirect('/blog');
     } catch (error) {
         console.error('Error deleting the post:', error);
@@ -541,3 +548,16 @@ const sendEmail = async (to, subject, text) => {
     }
 };
 
+// const axios = require('axios');
+
+// Route to fetch Chuck Norris joke
+app.get('/chuck-norris-joke', async (req, res) => {
+    try {
+        const response = await axios.get('https://api.chucknorris.io/jokes/random');
+        const joke = response.data.value;
+        res.send(joke);
+    } catch (error) {
+        console.error('Error fetching Chuck Norris joke:', error);
+        res.status(500).send('Error fetching Chuck Norris joke');
+    }
+});
